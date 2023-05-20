@@ -97,7 +97,7 @@ class Variable(Gaussian):
         return diff
     
     def __repr__(self):
-        s = "Variable with mean {} and sd {}".format(self.mu, self.sigma)
+        s = "Variable with mean {:3.3f} and sd {:3.3f}".format(self.mu, self.sigma)
         return(s)
     
     def __getitem__(self, factor):

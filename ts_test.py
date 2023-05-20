@@ -50,18 +50,22 @@ def make_players_test():
     p5 = Rating(mu=120, sigma=20)
     p6 = Rating(mu=105, sigma=25)
 
-    players = [p1, p2, p3, p4, p5, p6]
+    p7 = Rating(mu=115, sigma=15)
+    p8 = Rating(mu=108, sigma=20)
+    p9 = Rating(mu=110, sigma=25)
+
+    players = [p1, p2, p3, p4, p5, p6, p7, p8, p9]
 
     t1 = [p1, p2, p3]
     t2 = [p4, p5, p6]
-    teams = [t1, t2]
+    t3 = [p7, p8, p9]
+    teams = [t1, t2, t3]
     return players, teams
 
 def make_players_test2():
     p1 = Rating(mu=20, sigma=5)
 
     p2 = Rating(mu=30, sigma=10)
-
 
     players = [p1, p2]
 
@@ -70,8 +74,8 @@ def make_players_test2():
     teams = [t1, t2]
     return players, teams
 
-n_players = 6
-n_teams = 2
+n_players = 9
+n_teams = 3
 
 mu = 100
 sigma = 20
@@ -86,6 +90,7 @@ team_perf_vars = [graph.Variable() for i in range(n_teams)]
 team_diff_vars = [graph.Variable() for i in range(n_teams - 1)]
 
 team_sizes = [len(i) for i in teams]
+sum_team_sizes = np.cumsum(team_sizes)
 
 prior_layer = []
 for rating_var, player in zip(rating_vars, players):
@@ -100,7 +105,7 @@ for rating_var, perf_var in zip(rating_vars, perf_vars):
 team_perf_layer = []
 for team, team_perf_var in enumerate(team_perf_vars):
     if team > 0:
-        start = team_sizes[team - 1]
+        start = sum_team_sizes[team - 1]
     else:
         start = 0
     team_size = team_sizes[team]
@@ -140,19 +145,29 @@ for i,f in enumerate(perf_layer):
 for i,f in enumerate(team_perf_layer):
     f.down()
 
-min_delta = 1e-6
+min_delta = 0.001
 delta = 10
 
 team_diff_len = len(team_diff_layer)
 
+"""
+iterate the non-gaussians until they settle down
+"""
 i = 1
-while delta > min_delta:
-    print('schedule iter {}'.format(i))
-    print('delta: {}'.format(delta))
+while delta > min_delta: ##may want max iters here
     if team_diff_len == 1:
         team_diff_layer[0].down()
         delta = trunc_layer[0].up()
-    ## TODO: add for more teams
+    else:
+        delta = 0
+        for x in range(team_diff_len - 1):
+            team_diff_layer[x].down()
+            delta = max(delta, trunc_layer[x].up())
+            team_diff_layer[x].up(1)  # up to right variable
+        for x in range(team_diff_len - 1, 0, -1):
+            team_diff_layer[x].down()
+            delta = max(delta, trunc_layer[x].up())
+            team_diff_layer[x].up(0)  # up to left variable
     if delta <= min_delta:
         break
     i += 1
