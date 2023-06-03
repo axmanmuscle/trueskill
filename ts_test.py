@@ -1,6 +1,5 @@
 import numpy as np
 import ts_graph as graph
-import trueskill as ts
 from ts_run import rate
 
 """
@@ -189,7 +188,3 @@ print([r for r in rating_vars])
 r1 = rate(teams, [2, 3, 1])
 
 print(r1)
-
-r2 = ts.rate(teams, ranks=[2, 3, 1])
-
-print(r2)
