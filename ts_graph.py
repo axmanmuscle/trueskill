@@ -1,6 +1,32 @@
 import numpy as np
 from scipy.stats import norm
 
+GLOBAL_MU = 100
+GLOBAL_SIGMA = 20
+
+class Rating():
+    """
+    class for individual player ratings
+    """
+
+    def __init__(self, mu = None, sigma = None):
+        if mu is None:
+            self.mu = GLOBAL_MU
+        else:
+            self.mu = mu
+
+        if sigma is None:
+            self.sigma = GLOBAL_SIGMA
+        else:
+            self.sigma = sigma
+
+        self.mean = self.mu
+        self.sd = self.sigma
+
+    def __repr__(self):
+        s = "Rating class with mean {} and sd {}".format(self.mean, self.sd)
+        return(s)
+
 class Gaussian():
 
     #: Precision, the inverse of the variance.
