@@ -1,8 +1,8 @@
 import numpy as np
 import ts_graph as graph
 
-beta = 10 # sigma / 2
-tau = 2 # sigma / 100
+beta = 1000/6 # sigma / 2
+tau = 1000/300 # sigma / 100
 
     
 def rate(unsorted_teams, rankings):
@@ -135,6 +135,8 @@ def rate(unsorted_teams, rankings):
             f.up(x)
     for f in perf_layer:
         f.up()
+    for f in prior_layer:
+        f.up()
 
     # figure out how to group this up so it comes back out as teams like the input
-    return rating_vars 
+    return teams 

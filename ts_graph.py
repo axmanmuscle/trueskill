@@ -9,23 +9,38 @@ class Rating():
     class for individual player ratings
     """
 
-    def __init__(self, mu = None, sigma = None):
+    def __init__(self, mu = None, sigma = None, name = '', teamid = -1):
         if mu is None:
+            print('setting default mu')
             self.mu = GLOBAL_MU
         else:
             self.mu = mu
 
         if sigma is None:
+            print('setting default sigma')
             self.sigma = GLOBAL_SIGMA
         else:
             self.sigma = sigma
 
         self.mean = self.mu
         self.sd = self.sigma
+        self.name = name
+        self.teamid = teamid
 
+    def get_stats(self):
+        return self.mean, self.sd
+    
     def __repr__(self):
-        s = "Rating class with mean {} and sd {}".format(self.mean, self.sd)
+        s = "Player {} on team {} with mean {} and sd {}".format(self.name, self.teamid, self.mean, self.sd)
         return(s)
+    
+    def set(self, variable):
+        """
+        update values at end of TS run
+        """
+        self.mean = variable.mu
+        self.sd = variable.sigma
+        #print('successfully set with new mean {} and sigma {}'.format(self.mean, self.sd))
 
 class Gaussian():
 
@@ -154,6 +169,8 @@ class PriorFactor():
     
     # def __repr__(self):
     #     return 'prior factor with {} mean'.format(self.value.mu)
+    def up(self):
+        self.value.set(self.var)
 
 class LikelihoodFactor():
     """
